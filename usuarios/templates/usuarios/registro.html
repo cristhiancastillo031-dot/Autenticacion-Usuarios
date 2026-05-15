@@ -1,0 +1,16 @@
+<!DOCTYPE html>
+<html lang="es">
+<head>
+    <meta charset="UTF-8">
+    <title>Registro de Usuario</title>
+</head>
+<body>
+    <h2>Crear una nueva cuenta</h2>
+    
+    <form method="POST">
+        {% csrf_token %} <!-- El token de seguridad contra el error 403 -->
+        {{ form.as_p }}  <!-- Muestra los campos del formulario como párrafos -->
+        <button type="submit">Registrarme</button>
+    </form>
+</body>
+</html>
