@@ -118,3 +118,7 @@ USE_TZ = True
 STATIC_URL = "static/"
 CSRF_TRUSTED_ORIGINS = ['https://localhost:8000', 'http://localhost:8000', 'https://127.0.0.1:8000', 'http://127.0.0.1:8000', 'https://*.githubdev.com', 'https://*.preview.app.github.dev', 'https://*.app.github.dev']
 CSRF_TRUSTED_ORIGINS = ['https://localhost:8000', 'http://localhost:8000', 'https://127.0.0.1:8000', 'http://127.0.0.1:8000', 'https://*.githubdev.com', 'https://*.preview.app.github.dev', 'https://*.app.github.dev']
+
+
+# Envía al usuario automáticamente al login tras cerrar sesión
+LOGOUT_REDIRECT_URL = 'login'  # Usa el name exacto de tu URL de inicio de sesión
