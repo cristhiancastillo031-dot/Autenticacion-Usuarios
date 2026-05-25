@@ -24,4 +24,5 @@ urlpatterns = [
     path("admin/", admin.site.urls),
     path('', login, name='home'),
     path('', include('usuarios.urls')),
+    path('', include('domotica.urls')),
 ]

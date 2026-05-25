@@ -1,0 +1,141 @@
+{% extends 'domotica/base.html' %}
+
+{% block titulo %}Mis Propiedades{% endblock %}
+{% block encabezado %}🏠 Gestión de Propiedades Inteligentes{% endblock %}
+
+{% block contenido %}
+<div class="grid grid-cols-1 lg:grid-cols-3 gap-8 items-start"> 
+    
+    <!-- COLUMNA 1: FORMULARIO AGREGAR CASA --> 
+    <div class="bg-white p-6 rounded-2xl shadow-sm border border-gray-200 h-fit"> 
+        <h2 class="text-lg font-bold text-gray-800 mb-4">➕ Registrar Nueva Casa</h2> 
+        <form method="POST" action="">
+            {% csrf_token %}
+            <input type="hidden" name="action" value="guardar_casa">
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Nombre de la Casa:</label>
+                {{ casa_form.nombre }}
+            </div>
+            
+            <div class="mb-4">
+                <label class="block text-sm font-medium text-gray-700 mb-1">Dirección:</label>
+                {{ casa_form.direccion }}
+            </div>
+            
+            <button type="submit" class="w-full mt-2 bg-indigo-600 hover:bg-indigo-500 text-white font-bold py-2.5 px-4 rounded-xl transition text-sm cursor-pointer">
+                Guardar Casa
+            </button>
+        </form>
+    </div> 
+    
+    <!-- COLUMNAS 2 y 3: LISTADO JERÁRQUICO COMPLETAMENTE DESPLEGABLE --> 
+    <div class="lg:col-span-2 space-y-6">
+        {% for casa in casas %}
+            <details class="bg-white rounded-2xl shadow-sm border border-gray-200 overflow-hidden group">
+                
+                <summary class="bg-gray-900 p-4 flex justify-between items-center text-white cursor-pointer select-none list-none [&::-webkit-details-marker]:hidden">
+                    <div class="flex items-center gap-3">
+                        <span class="text-xs text-gray-400 transition transform duration-200 group-open:rotate-90">▶</span>
+                        <div>
+                            <h3 class="text-lg font-bold inline-block">🏠 {{ casa.nombre }}</h3>
+                            <p class="text-xs text-gray-400 font-normal">{{ casa.direccion }}</p>
+                        </div>
+                    </div>
+                    <span class="bg-indigo-600 text-xs px-2.5 py-1 rounded-lg font-semibold border border-indigo-500">
+                        {{ casa.habitaciones.count }} Áreas
+                    </span>
+                </summary>
+
+                <div class="p-6 space-y-6 border-t border-gray-100 bg-gray-50/10">
+                    
+                    <!-- FORMULARIO: AGREGAR HABITACIÓN -->
+                    <details class="bg-gray-50 p-4 rounded-xl border border-gray-200 group/form">
+                        <summary class="text-sm font-semibold text-indigo-600 cursor-pointer list-none flex items-center justify-between select-none">
+                            <span>➕ Añadir Habitación a esta casa</span>
+                            <span class="transition group-open/form:rotate-180">👇</span>
+                        </summary>
+                        <form method="POST" action="" class="mt-3 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end">
+                            {% csrf_token %}
+                            <input type="hidden" name="action" value="guardar_habitacion">
+                            <input type="hidden" name="casa_id" value="{{ casa.id }}">
+                            
+                            <div class="sm:col-span-2">
+                                <label class="block text-xs font-medium text-gray-600 mb-1">Nombre de la Habitación:</label>
+                                {{ habitacion_form.nombre }}
+                            </div>
+                            <button type="submit" class="bg-emerald-600 hover:bg-emerald-500 text-white font-bold py-2 px-3 rounded-lg text-xs h-[38px] transition cursor-pointer">
+                                Agregar
+                            </button>
+                        </form>
+                    </details>
+
+                    <!-- LISTADO DE HABITACIONES -->
+                    <div class="space-y-4">
+                        {% for habitacion in casa.habitaciones.all %}
+                            <div class="border border-gray-200 rounded-xl p-4 bg-white shadow-xs">
+                                <div class="flex justify-between items-center border-b pb-2 mb-3 border-gray-100">
+                                    <h4 class="font-bold text-gray-700 text-base">🛏️ {{ habitacion.nombre }}</h4>
+                                    <span class="text-xs bg-gray-100 text-gray-600 px-2 py-0.5 rounded-full font-medium">
+                                        {{ habitacion.dispositivos.count }} Nodos
+                                    </span>
+                                </div>
+
+                                <!-- FORMULARIO: AGREGAR DISPOSITIVO -->
+                                <details class="mb-4 group/disp">
+                                    <summary class="text-xs font-medium text-purple-600 cursor-pointer list-none flex items-center gap-1 select-none">
+                                        <span>⚙️ Configurar nuevo dispositivo</span>
+                                        <span class="text-[10px] transition group-open/disp:rotate-180">👇</span>
+                                    </summary>
+                                    <form method="POST" action="" class="mt-2 grid grid-cols-1 sm:grid-cols-3 gap-2 items-end bg-gray-50 p-3 rounded-xl border border-gray-200 shadow-sm">
+                                        {% csrf_token %}
+                                        <input type="hidden" name="action" value="guardar_dispositivo">
+                                        <input type="hidden" name="habitacion_id" value="{{ habitacion.id }}">
+                                        
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-gray-500 mb-1">Nombre:</label>
+                                            {{ dispositivo_form.nombre }}
+                                        </div>
+                                        <div>
+                                            <label class="block text-[10px] font-medium text-gray-500 mb-1">Tipo:</label>
+                                            {{ dispositivo_form.tipo }}
+                                        </div>
+                                        <button type="submit" class="bg-purple-600 hover:bg-purple-700 text-white font-bold py-2 px-2 rounded-lg text-xs h-[38px] transition cursor-pointer">
+                                            Vincular
+                                        </button>
+                                    </form>
+                                </details>
+
+                                <!-- LISTADO DE DISPOSITIVOS -->
+                                <div class="grid grid-cols-1 sm:grid-cols-2 gap-2">
+                                    {% for dispositivo in habitacion.dispositivos.all %}
+                                        <div class="bg-gray-50/50 p-3 rounded-xl border border-gray-100 flex justify-between items-center transition hover:bg-gray-50">
+                                            <div class="flex items-center gap-2">
+                                                <span class="text-xl">{{ dispositivo.icono }}</span>
+                                                <div>
+                                                    <p class="text-sm font-semibold text-gray-800">{{ dispositivo.nombre }}</p>
+                                                    <p class="text-[10px] uppercase tracking-wider text-gray-400 font-bold">{{ dispositivo.get_tipo_display }}</p>
+                                                </div>
+                                            </div>
+                                            <span class="w-2 h-2 rounded-full {% if dispositivo.esta_encendido %}bg-green-500 animate-pulse{% else %}bg-red-400{% endif %}"></span>
+                                        </div>
+                                    {% empty %}
+                                        <p class="text-xs text-gray-400 italic col-span-2">No hay dispositivos en esta habitación.</p>
+                                    {% endfor %}
+                                </div>
+                            </div>
+                        {% empty %}
+                            <p class="text-sm text-gray-400 italic text-center py-4">Aún no has registrado habitaciones en esta casa.</p>
+                        {% endfor %}
+                    </div>
+                </div>
+            </details>
+        {% empty %}
+            <div class="bg-white p-8 rounded-2xl border border-gray-200 text-center">
+                <p class="text-gray-500 text-base">No tienes ninguna propiedad registrada todavía.</p>
+                <p class="text-xs text-gray-400 mt-1">Utiliza el panel de la izquierda para dar de alta tu primera casa.</p>
+            </div>
+        {% endfor %}
+    </div>
+</div>
+{% endblock %} <!-- 🎯 ESTA LÍNEA DE CERRADO ERA LA QUE SE HABÍA PERDIDO -->

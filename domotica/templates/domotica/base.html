@@ -1,0 +1,54 @@
+<!-- domotica/templates/domotica/base.html -->
+<!DOCTYPE html>
+<html lang="es" class="h-full bg-gray-900">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>{% block titulo %}Panel de Control{% endblock %}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+</head>
+<body class="bg-gray-100 flex h-screen antialiased text-gray-800">
+
+    <!-- Barra Lateral Fija (Se hereda en todas las páginas) -->
+    <div class="w-64 bg-gray-900 text-white p-6 flex flex-col justify-between shrink-0">
+        <div>
+            <h2 class="text-xl font-black mb-8 tracking-tight flex items-center gap-2">🛠️ Hub Domótica</h2>
+            <nav class="space-y-2">
+                <!-- Enlaces reales del sistema -->
+                <a href="{% url 'dashboard' %}" class="block py-2.5 px-4 rounded-xl font-medium transition {% if request.resolver_match.url_name == 'dashboard' %}bg-indigo-600 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %}">🏠 Inicio / Perfil</a>
+                
+                <!-- 🎯 AQUÍ CORRE TU PÁGINA DE MIS CASAS -->
+                <a href="{% url 'mis_casas' %}" class="block py-2.5 px-4 rounded-xl font-medium transition {% if request.resolver_match.url_name == 'mis_casas' %}bg-indigo-600 text-white{% else %}text-gray-400 hover:bg-gray-800 hover:text-white{% endif %}">🏢 Mis Propiedades</a>
+            </nav>
+        </div>
+
+        <!-- Botón de Cerrar Sesión -->
+        <form method="POST" action="{% url 'logout' %}" class="w-full">
+            {% csrf_token %}
+            <button type="submit" class="w-full bg-red-600/20 hover:bg-red-600 text-red-400 hover:text-white border border-red-500/30 py-2 rounded-xl font-bold text-sm transition cursor-pointer">
+                Cerrar Sesión
+            </button>
+        </form>    
+    </div>
+
+    <!-- Contenido Principal Dinámico -->
+    <div class="flex-1 flex flex-col h-full overflow-hidden">
+        <!-- Encabezado superior fijo con datos del usuario -->
+        <header class="flex justify-between items-center bg-white px-8 py-4 border-b border-gray-200 shrink-0">
+            <h1 class="text-xl font-bold text-gray-800">{% block encabezado %}Panel General{% endblock %}</h1>
+            <span class="bg-indigo-50 text-indigo-700 text-xs font-semibold px-3 py-1.5 rounded-full border border-indigo-100 flex items-center gap-1.5">
+                <span class="w-1.5 h-1.5 rounded-full bg-indigo-500"></span>
+                {{ request.user.email }} <!-- Django trae al usuario logueado por defecto aquí -->
+            </span>
+        </header>
+
+        <!-- Zona donde se inyectan las páginas de forma dinámica -->
+        <main class="flex-1 p-8 overflow-y-auto bg-gray-50">
+            {% block contenido %}
+            <!-- Aquí caerá el contenido de las otras páginas -->
+            {% endblock %}
+        </main>
+    </div>
+
+</body>
+</html>

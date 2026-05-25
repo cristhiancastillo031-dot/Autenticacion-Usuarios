@@ -1,16 +1,92 @@
+<!-- domotica/templates/domotica/registro.html -->
 <!DOCTYPE html>
-<html lang="es">
+<!-- 🎯 REQUERIMIENTO DE TAILWIND: Forzar que el fondo ocupe todo el alto -->
+<html lang="es" class="h-full bg-gray-900">
 <head>
     <meta charset="UTF-8">
-    <title>Registro de Usuario</title>
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Registro</title>
+    <!-- CDN Oficial de Tailwind -->
+    <script src="https://cdn.tailwindcss.com"></script>
 </head>
-<body>
-    <h2>Crear una nueva cuenta</h2>
+<body class="h-full">
+
+<div class="flex min-h-full flex-col justify-center px-6 py-12 lg:px-8">
+  
+  <!-- LOGO Y TÍTULO -->
+  <div class="sm:mx-auto sm:w-full sm:max-w-sm">
+    <img src="https://tailwindcss.com/plus-assets/img/logos/mark.svg?color=indigo&shade=500" alt="Domotica Logo" class="mx-auto h-10 w-auto" />
+    <h2 class="mt-10 text-center text-2xl font-bold tracking-tight text-white">Registrarte en el Sistema</h2>
+  </div>
+
+  <div class="mt-10 sm:mx-auto sm:w-full sm:max-w-sm">
     
-    <form method="POST">
-        {% csrf_token %} <!-- El token de seguridad contra el error 403 -->
-        {{ form.as_p }}  <!-- Muestra los campos del formulario como párrafos -->
-        <button type="submit">Registrarme</button>
+    <!-- FORMULARIO INTEGRADO CON DJANGO -->
+    <form action="" method="POST" class="space-y-6">
+      <!-- 🛑 INAMOVIBLE 1: Firma de seguridad obligatoria -->
+      {% csrf_token %}
+
+      <!-- CONTENEDOR PARA LOS INPUTS DE DJANGO -->
+      <div class="text-sm text-gray-200 block-inputs-django">
+        <!-- 
+          🎯 NOTA DE DISEÑO: Usamos 'form' a secas en lugar de 'form.as_p'. 
+          Esto evita que Django inyecte etiquetas <p> molestas que desalinean el modo oscuro.
+        -->
+        {{ form }}
+      </div>
+
+      <!-- BOTÓN DE ENVÍO ESTILIZADO -->
+      <div>
+        <!-- 🛑 INAMOVIBLE 2: Conserva el type="submit" para que envíe los datos -->
+        <button type="submit" class="flex w-full justify-center rounded-md bg-indigo-500 px-3 py-1.5 text-sm font-semibold text-white hover:bg-indigo-400 focus-visible:outline-2 focus-visible:outline-offset-2 focus-visible:outline-indigo-500 cursor-pointer">
+          Registrar
+        </button>
+      </div>
     </form>
+
+    <!-- ENLACE DE REGISTRO DINÁMICO -->
+    <p class="mt-10 text-center text-sm text-gray-400">
+      ¿Ya tienes una cuenta?
+      <!-- 🎯 Cambiamos el '#' por la URL real de tu aplicación -->
+      <a href="{% url 'login' %}" class="font-semibold text-indigo-400 hover:text-indigo-300 ml-1">Ingresa aquí</a>
+    </p>
+  </div>
+</div>
+
+<!-- 
+  🎨 TRUCO SÚPER FACIL DE ESTILOS: 
+  Como Django dibuja los inputs planos por defecto, este pequeño bloque de estilos 
+  le inyecta las clases de Tailwind del ejemplo directamente a los cuadros de texto 
+  que genera Django, sin romper el HTML.
+-->
+<style>
+  .block-inputs-django p {
+      margin-bottom: 1rem;
+  }
+  .block-inputs-django label {
+      display: block;
+      font-size: 0.875rem;
+      font-medium: 500;
+      color: #f3f4f6; /* text-gray-100 */
+      margin-bottom: 0.5rem;
+  }
+  .block-inputs-django input {
+      display: block;
+      width: 100%;
+      border-radius: 0.375rem; /* rounded-md */
+      background-color: rgba(255, 255, 255, 0.05); /* bg-white/5 */
+      padding: 0.375rem 0.75rem; /* px-3 py-1.5 */
+      color: #ffffff; /* text-white */
+      border: 1px solid rgba(255, 255, 255, 0.1); /* outline-white/10 */
+      font-size: 1rem;
+      outline: none;
+  }
+  .block-inputs-django input:focus {
+      border-color: #6366f1; /* focus:outline-indigo-500 */
+      box-shadow: 0 0 0 2px rgba(99, 102, 241, 0.2);
+  }
+</style>
+
 </body>
 </html>
+
